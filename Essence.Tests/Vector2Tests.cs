@@ -1,6 +1,4 @@
-﻿using NUnit.Framework;
-using Essence;
-
+﻿
 namespace Essence.Tests
 {
     [TestFixture]
