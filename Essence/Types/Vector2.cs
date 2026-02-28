@@ -1,10 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Essence
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct Vector2 : IEquatable<Vector2>
+    public struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         public float x;
         public float y;
@@ -80,9 +81,16 @@ namespace Essence
 
         #region Common Overrides (ToString, GetHashCode, Equals)
 
-        public override string ToString() => $"({x}, {y})";
+        public override readonly string ToString() => ToString("G", CultureInfo.CurrentCulture);
 
-        public override bool Equals(object? other)
+        public readonly string ToString(string? format, IFormatProvider? formatProvider = null)
+        {
+            string fmt = format ?? "G";
+            IFormatProvider provider = formatProvider ?? CultureInfo.CurrentCulture;
+            return $"({x.ToString(fmt, provider)}, {y.ToString(fmt, provider)})";
+        }
+
+        public readonly override bool Equals(object? other)
         {
             if (!(other is Vector2))
                 return false;
@@ -90,9 +98,9 @@ namespace Essence
             return Equals((Vector2)other);
         }
 
-        public bool Equals(Vector2 other) => x == other.x && y == other.y;
+        public readonly bool Equals(Vector2 other) => x == other.x && y == other.y;
 
-        public override int GetHashCode() => HashCode.Combine(x, y);
+        public readonly override int GetHashCode() => HashCode.Combine(x, y);
 
         #endregion
     }
