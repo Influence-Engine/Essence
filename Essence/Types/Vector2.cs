@@ -34,6 +34,13 @@ namespace Essence
         #region Constructors
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vector2(float value)
+        {
+            this.x = value;
+            this.y = value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2(float x, float y)
         {
             this.x = x; 
@@ -55,7 +62,7 @@ namespace Essence
         public static readonly Vector2 PositiveInfinity = new(float.PositiveInfinity, float.PositiveInfinity);
         public static readonly Vector2 NegativeInfinity = new(float.NegativeInfinity, float.NegativeInfinity);
 
-        public static readonly Vector2 OneMinus = new Vector2(-1f, -1f);
+        public static readonly Vector2 NegativeOne = new Vector2(-1f, -1f);
 
         #endregion
 
@@ -83,6 +90,12 @@ namespace Essence
             }
         }
 
+        public readonly Vector2 Perpendicular
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new Vector2(-y, x);
+        }
+
         public readonly bool IsZero
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -104,6 +117,13 @@ namespace Essence
         #endregion
 
         #region Instance Methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Set(float newX, float newY)
+        {
+            x = newX;
+            y = newY;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Normalize()
@@ -132,6 +152,13 @@ namespace Essence
                 x *= scale;
                 y *= scale;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly void Deconstruct(out float outX, out float outY)
+        {
+            outX = x;
+            outY = y;
         }
 
         #endregion
@@ -251,7 +278,6 @@ namespace Essence
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-
         public static float SignedAngle(Vector2 from, Vector2 to)
         {
             float unsigned = Angle(from, to);
@@ -259,6 +285,7 @@ namespace Essence
             return unsigned * (sign == 0 ? 1f : sign);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 FromAngle(float degrees)
         {
             float rad = degrees * (MathF.PI / 180f);
@@ -285,7 +312,7 @@ namespace Essence
         public static Vector2 operator -(Vector2 a, Vector2 b) => new(a.x - b.x, a.y - b.y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 operator -(Vector2 a) => new(-a.x, a.y);
+        public static Vector2 operator -(Vector2 a) => new(-a.x, -a.y);
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
