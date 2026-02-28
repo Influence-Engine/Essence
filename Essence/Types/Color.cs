@@ -12,6 +12,29 @@ namespace Essence
         public float b;
         public float a;
 
+        public float this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if ((uint)index >= 4)
+                    throw new IndexOutOfRangeException();
+
+                return Unsafe.Add(ref r, index);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                if ((uint)index >= 4)
+                    throw new IndexOutOfRangeException();
+
+                Unsafe.Add(ref r, index) = value;
+            }
+        }
+
+        #region Constructors
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Color(float r, float g, float b, float a = 1f)
         {
@@ -20,6 +43,7 @@ namespace Essence
             this.b = b;
             this.a = a;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Color(float gray, float a = 1f)
         {
@@ -28,6 +52,106 @@ namespace Essence
             this.b = gray;
             this.a = a;
         }
+
+        #endregion
+
+        #region Common Static Vectors
+
+        public static readonly Color Red = new Color(1f, 0f, 0f);
+        public static readonly Color Green = new Color(0f, 1f, 0f);
+        public static readonly Color Blue = new Color(0f, 0f, 1f);
+
+        public static readonly Color Black = new Color(0f, 0f, 0f);
+        public static readonly Color White = new Color(1f, 1f, 1f);
+        public static readonly Color Gray = new Color(0.5f, 0.5f, 0.5f);
+
+        public static readonly Color Yellow = new Color(1f, 1f, 0f);
+        public static readonly Color Cyan = new Color(0f, 1f, 1f);
+        public static readonly Color Magenta = new Color(1f, 0f, 1f);
+
+        public static readonly Color Clear = new Color(0f, 0f, 0f, 0f);
+
+        #endregion
+
+        #region Properties
+
+        public readonly Color Clamped
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new(Math.Clamp(r, 0f, 1f), Math.Clamp(g, 0f, 1f), Math.Clamp(b, 0f, 1f), Math.Clamp(a, 0f, 1f));
+        }
+
+        public readonly Color Opaque
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new(r, g, b, 1f);
+        }
+
+        public readonly float Luminance
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => 0.2126f * r + 0.7152f * g + 0.0722f * b;
+        }
+
+        public readonly Color Grayscale
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                float luminance = 0.2126f * r + 0.7152f * g + 0.0722f * b;
+                return new Color(luminance, luminance, luminance, a);
+            }
+        }
+
+        public readonly Color Inverted
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new Color(1f - r, 1f - g, 1f - b, a);
+        }
+
+        public readonly bool IsOpaque
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => a >= 1f;
+        }
+
+        public readonly bool IsTransparent
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => a <= 0f;
+        }
+
+        #endregion
+
+        #region Instance Methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Set(float newR, float newG, float newB, float newA = 1f)
+        {
+            r = newR;
+            g = newG;
+            b = newB;
+            a = newA;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clamp()
+        {
+            r = Math.Clamp(r, 0f, 1f);
+            g = Math.Clamp(g, 0f, 1f);
+            b = Math.Clamp(b, 0f, 1f);
+            a = Math.Clamp(a, 0f, 1f);
+        }
+
+        public readonly Color WithRed(float red) => new(red, g, b, a);
+
+        public readonly Color WithGreen(float green) => new(r, green, b, a);
+
+        public readonly Color WithBlue(float blue) => new(r, g, blue, a);
+
+        public readonly Color WithAlpha(float alpha) => new (r, g, b, alpha);
+
+        #endregion
 
         #region Operators
 
