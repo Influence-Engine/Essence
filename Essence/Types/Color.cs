@@ -153,6 +153,90 @@ namespace Essence
 
         #endregion
 
+        #region Static Methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color Min(Color a, Color b) => new Color(MathF.Min(a.r, b.r), MathF.Min(a.g, b.g), MathF.Min(a.b, b.b), MathF.Min(a.a, b.a));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color Max(Color a, Color b) => new Color(MathF.Max(a.r, b.r), MathF.Max(a.g, b.g), MathF.Max(a.b, b.b), MathF.Max(a.a, b.a));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color Lerp(Color a, Color b, float t)
+        {
+            t = Math.Clamp(t, 0f, 1f);
+            return new Color(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color LerpUnclamped(Color a, Color b, float t) => new Color(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ApproximatelyEqual(Color a, Color b, float epsilon = 1e-6f)
+            => MathF.Abs(a.r - b.r) <= epsilon
+            && MathF.Abs(a.g - b.g) <= epsilon
+            && MathF.Abs(a.b - b.b) <= epsilon
+            && MathF.Abs(a.a - b.a) <= epsilon;
+
+        #endregion
+
+        #region Conversion Methods
+
+        #region Integer Color Space
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly uint ToRGBA32()
+        {
+            uint red = (uint)Math.Clamp((int)(r * 255f + 0.5f), 0, 255);
+            uint green = (uint)Math.Clamp((int)(g * 255f + 0.5f), 0, 255);
+            uint blue = (uint)Math.Clamp((int)(b * 255f + 0.5f), 0, 255);
+            uint alpha = (uint)Math.Clamp((int)(a * 255f + 0.5f), 0, 255);
+            return (red << 24) | (green << 16) | (blue << 8) | alpha;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color FromRGBA32(uint rgba)
+        {
+            const float inverted = 1f / 255f;
+            return new Color(
+                ((rgba >> 24) & 0xFF) * inverted,
+                ((rgba >> 16) & 0xFF) * inverted,
+                ((rgba >> 8) & 0xFF) * inverted,
+                (rgba & 0xFF) * inverted);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly uint ToARGB32()
+        {
+            uint red = (uint)Math.Clamp((int)(r * 255f + 0.5f), 0, 255);
+            uint green = (uint)Math.Clamp((int)(g * 255f + 0.5f), 0, 255);
+            uint blue = (uint)Math.Clamp((int)(b * 255f + 0.5f), 0, 255);
+            uint alpha = (uint)Math.Clamp((int)(a * 255f + 0.5f), 0, 255);
+            return (alpha << 24) | (red << 16) | (green << 8) | blue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color FromARGB32(uint rgba)
+        {
+            const float inverted = 1f / 255f;
+            return new Color(
+                ((rgba >> 16) & 0xFF) * inverted,
+                ((rgba >> 8) & 0xFF) * inverted,
+                (rgba & 0xFF) * inverted,
+                ((rgba >> 24) & 0xFF) * inverted);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color FromBytes(byte r, byte g, byte b, byte a = 255)
+        {
+            const float inverted = 1f / 255f;
+            return new Color(r * inverted, g * inverted, b * inverted, a * inverted);
+        }
+
+        #endregion
+
+        #endregion
+
         #region Operators
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
