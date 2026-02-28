@@ -31,9 +31,6 @@ namespace Essence
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Vector2() { }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2(float x, float y)
         {
             this.x = x; 
@@ -80,8 +77,6 @@ namespace Essence
         #endregion
 
         #endregion
-
-        #region 
 
         #region Common Overrides (ToString, GetHashCode, Equals)
 
