@@ -51,7 +51,7 @@ namespace Essence
             get
             {
                 float mag = MathF.Sqrt(x * x + y * y);
-                if(mag < 0f)
+                if(mag > 0f)
                     return new Vector2(x / mag, y / mag);
 
                 return default;
