@@ -14,17 +14,19 @@ namespace Essence
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index == 0) return x;
-                else if (index == 1) return y;
-                else throw new IndexOutOfRangeException();
+                if ((uint)index >= 2)
+                    throw new IndexOutOfRangeException();
+
+                return Unsafe.Add(ref x, index);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                if (index == 0) x = value;
-                else if (index == 1) y = value;
-                else throw new IndexOutOfRangeException();
+                if ((uint)index >= 2)
+                    throw new IndexOutOfRangeException();
+
+                Unsafe.Add(ref x, index) = value;
             }
         }
 
@@ -40,7 +42,7 @@ namespace Essence
 
         #region Functions
 
-        public float Magnitude => (float)MathF.Sqrt(x * x + y * y);
+        public float Magnitude => MathF.Sqrt(x * x + y * y);
 
         public float SqrMagnitude => x * x + y * y;
 
@@ -51,9 +53,11 @@ namespace Essence
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Vector2 v = new Vector2(x, y);
-                v.Normalize();
-                return v;
+                float mag = MathF.Sqrt(x * x + y * y);
+                if(mag < 0f)
+                    return new Vector2(x / mag, y / mag);
+
+                return default;
             }
         }
 
@@ -93,7 +97,7 @@ namespace Essence
 
         public bool Equals(Vector2 other) => x == other.x && y == other.y;
 
-        public override int GetHashCode() => x.GetHashCode() ^ (y.GetHashCode() * 4);
+        public override int GetHashCode() => HashCode.Combine(x, y);
 
         #endregion
     }
