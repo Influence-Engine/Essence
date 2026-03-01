@@ -1,4 +1,5 @@
 ﻿using SDL3;
+using System.Runtime.CompilerServices;
 
 namespace Essence.Input
 {
@@ -29,14 +30,14 @@ namespace Essence.Input
         static readonly bool[] mouseReleasedThisFrame = new bool[MouseButtonCount];
 
         static readonly List<int> dirtyMouseButtons = new List<int>(8);
-        static int anyMouseDownCoun;
+        static int anyMouseDownCount;
 
         #endregion
 
         #region Mouse Position & Movement
 
         public static Vector2 mousePosition { get; private set; }
-        public static Vector2 lastMousePositiob { get; private set; }
+        public static Vector2 lastMousePosition { get; private set; }
         public static Vector2 mouseDelta { get; private set; }
         public static Vector2 mouseScrollDelta { get; private set; }
 
@@ -50,11 +51,11 @@ namespace Essence.Input
             sdlKeyMap = new Dictionary<SDL.KeyCode, KeyCode>(KeyCapacity)
             {
                 { SDL.KeyCode.Space, KeyCode.Space },
-                { SDL.KeyCode.Space, KeyCode.Apostrophe },
-                { SDL.KeyCode.Space, KeyCode.Comma },
-                { SDL.KeyCode.Space, KeyCode.Minus },
-                { SDL.KeyCode.Space, KeyCode.Period },
-                { SDL.KeyCode.Space, KeyCode.Slash },
+                { SDL.KeyCode.Quote, KeyCode.Apostrophe },
+                { SDL.KeyCode.Comma, KeyCode.Comma },
+                { SDL.KeyCode.Minus, KeyCode.Minus },
+                { SDL.KeyCode.Period, KeyCode.Period },
+                { SDL.KeyCode.Slash, KeyCode.Slash },
 
                 { SDL.KeyCode.Alpha0, KeyCode.Alpha0 },
                 { SDL.KeyCode.Alpha1, KeyCode.Alpha1 },
@@ -124,6 +125,150 @@ namespace Essence.Input
                 // Right Super
                 { SDL.KeyCode.Z, KeyCode.Z },
             };
+        }
+
+        public static void Update()
+        {
+            foreach(int i in dirtyKeys)
+            {
+                keyPressedThisFrame[i] = false;
+                keyReleasedThisFrame[i] = false;
+            }
+            dirtyKeys.Clear();
+            anyKeyDownCount = 0;
+
+            foreach(int i in dirtyMouseButtons)
+            {
+                mousePressedThisFrame[i] = false;
+                mouseReleasedThisFrame[i] = false;
+            }
+            dirtyMouseButtons.Clear();
+            anyMouseDownCount = 0;
+
+            mouseDelta = mousePosition - lastMousePosition;
+            lastMousePosition = mousePosition;
+            mouseScrollDelta = Vector2.Zero;
+        }
+
+        public static void ProcessEvent(SDL.Event e)
+        {
+            switch(e.type)
+            {
+                case SDL.EventType.KeyDown:
+                    if (!e.key.repeat) 
+                        OnKeyDown(e.key.key);
+                    break;
+
+                case SDL.EventType.KeyUp:
+                    OnKeyUp(e.key.key);
+                    break;
+
+                case SDL.EventType.MouseButtonDown:
+                    OnMouseButtonDown(GetMouseButtonIndex(e.button.button));
+                    break;
+
+                case SDL.EventType.MouseButtonUp:
+                    OnMouseButtonDown(GetMouseButtonIndex(e.button.button));
+                    break;
+
+                case SDL.EventType.MouseMotion:
+                    mousePosition = new Vector2(e.motion.x, e.motion.y);
+                    break;
+
+                case SDL.EventType.MouseWheel:
+                    mouseScrollDelta = new Vector2(e.wheel.x, e.wheel.y);
+                    break;
+            }
+        }
+
+        #region Event Handling
+
+        static void OnKeyDown(SDL.KeyCode sdlKey)
+        {
+            if (!sdlKeyMap.TryGetValue(sdlKey, out KeyCode key))
+                return;
+
+            int i = (int)key;
+            if (keyHeld[i])
+                return;
+
+            keyHeld[i] = true;
+            keyPressedThisFrame[i] = true;
+            anyKeyDownCount++;
+            dirtyKeys.Add(i);
+        }
+
+        static void OnKeyUp(SDL.KeyCode sdlKey)
+        {
+            if (!sdlKeyMap.TryGetValue(sdlKey, out KeyCode key))
+                return;
+
+            int i = (int)key;
+            if (!keyHeld[i])
+                return;
+
+            keyHeld[i] = false;
+            keyReleasedThisFrame[i] = true;
+            dirtyKeys.Add(i);
+        }
+
+        static void OnMouseButtonDown(int button)
+        {
+            if ((uint)button >= MouseButtonCount)
+                return;
+
+            if (mouseHeld[button])
+                return;
+
+            mouseHeld[button] = true;
+            mousePressedThisFrame[button] = true;
+            anyMouseDownCount++;
+            dirtyMouseButtons.Add(button);
+        }
+
+        static void OnMouseButtonUp(int button)
+        {
+            if ((uint)button >= MouseButtonCount)
+                return;
+
+            if (!mouseHeld[button])
+                return;
+
+            mouseHeld[button] = false;
+            mousePressedThisFrame[button] = true;
+            dirtyMouseButtons.Add(button);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static int GetMouseButtonIndex(uint sdlButton) => sdlButton switch
+        {
+            1 => 0, // Left
+            2 => 2, // Middle
+            3 => 1, // Right
+            4 => 3, // X1
+            5 => 4, // X2
+            _ => -1
+        };
+
+        #endregion
+
+        public static void Reset()
+        {
+            Array.Clear(keyHeld, 0, KeyCapacity);
+            Array.Clear(keyPressedThisFrame, 0, KeyCapacity);
+            Array.Clear(keyReleasedThisFrame, 0, KeyCapacity);
+            dirtyKeys.Clear();
+            anyKeyDownCount = 0;
+
+            Array.Clear(mouseHeld, 0, MouseButtonCount);
+            Array.Clear(mousePressedThisFrame, 0, MouseButtonCount);
+            Array.Clear(mouseReleasedThisFrame, 0, MouseButtonCount);
+            dirtyMouseButtons.Clear();
+            anyMouseDownCount = 0;
+
+            mousePosition = Vector2.Zero;
+            lastMousePosition = Vector2.Zero;
+            mouseDelta = Vector2.Zero;
         }
     }
 }
