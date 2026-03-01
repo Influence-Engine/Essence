@@ -1,6 +1,8 @@
 ﻿using SDL3;
 using System.Runtime.CompilerServices;
 
+// TODO INCOMPLETE
+
 namespace Essence.Input
 {
     /// <summary>
@@ -309,6 +311,39 @@ namespace Essence.Input
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GetMouseButtonUp(MouseButton button) => GetMouseButton((uint)button);
+
+        #endregion
+
+        #region Utility
+
+        public static bool Shift => GetKey(KeyCode.LeftShift) || GetKey(KeyCode.RightShift);
+        public static bool Control => GetKey(KeyCode.LeftControl) || GetKey(KeyCode.RightControl);
+        public static bool Alt => GetKey(KeyCode.LeftAlt) || GetKey(KeyCode.RightAlt);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float GetAxis(KeyCode negative, KeyCode positive)
+        {
+            float value = 0;
+            if (GetKey(positive))
+                value += 1f;
+
+            if(GetKey(negative))
+                value -= 1f;
+
+            return value;
+        }
+
+        public static float Vertical
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => GetAxis(KeyCode.Down, KeyCode.Up) + GetAxis(KeyCode.S, KeyCode.W);
+        }
+
+        public static float Horizontal
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => GetAxis(KeyCode.Left, KeyCode.Right) + GetAxis(KeyCode.A, KeyCode.D);
+        }
 
         #endregion
 
