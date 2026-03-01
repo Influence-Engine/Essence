@@ -151,6 +151,24 @@ namespace Essence
 
         public readonly Color WithAlpha(float alpha) => new (r, g, b, alpha);
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly void Deconstruct(out float outR, out float outG, out float outB)
+        {
+            outR = r;
+            outG = g;
+            outB = b;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly void Deconstruct(out float outR, out float outG, out float outB, out float outA)
+        {
+            outR = r;
+            outG = g;
+            outB = b;
+            outA = a;
+        }
+
         #endregion
 
         #region Static Methods
@@ -170,6 +188,17 @@ namespace Essence
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Color LerpUnclamped(Color a, Color b, float t) => new Color(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, a.a + (b.a - a.a) * t);
+
+        #region Blend
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color AdditiveBlend(Color a, Color b) => new Color(a.r + b.r, a.g + b.g, a.b + b.b, MathF.Max(a.a, b.a));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color MultiplyBlend(Color a, Color b) => new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+
+        #endregion
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ApproximatelyEqual(Color a, Color b, float epsilon = 1e-6f)
