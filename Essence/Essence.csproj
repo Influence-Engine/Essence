@@ -7,4 +7,37 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="SDL3-CS">
+      <HintPath>Managed\Assemblies\SDL3-CS.dll</HintPath>
+	  <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\License">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>Licenses\Essence.txt</TargetPath>
+		</None>
+	</ItemGroup>
+
+  <ItemGroup>
+    <None Update="Managed\Assemblies\SDL3-CS.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<TargetPath>SDL3-CS.dll</TargetPath>
+    </None>
+    <None Update="Managed\Assemblies\SDL3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<TargetPath>SDL3.dll</TargetPath>
+    </None>
+    <None Update="Managed\Licenses\SDL3-CS.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<TargetPath>Licenses\SDL3-CS.txt</TargetPath>
+    </None>
+    <None Update="Managed\Licenses\SDL3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<TargetPath>Licenses\SDL3.txt</TargetPath>
+    </None>
+  </ItemGroup>
+
 </Project>
