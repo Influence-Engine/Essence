@@ -1,6 +1,6 @@
 ﻿namespace Essence
 {
-    public class Class1
+    private class Class1
     {
         // Not a "game engine"
         // But a good start to any project
