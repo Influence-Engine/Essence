@@ -17,7 +17,7 @@
 	<ItemGroup>
 		<None Include="..\License">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Licenses\Essence.txt</TargetPath>
+			<TargetPath>Managed\Licenses\Essence.txt</TargetPath>
 		</None>
 	</ItemGroup>
 
