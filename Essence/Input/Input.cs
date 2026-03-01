@@ -252,6 +252,66 @@ namespace Essence.Input
 
         #endregion
 
+        #region Keyboard Queries
+
+        public static bool AnyKeyDown
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => anyKeyDownCount > 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetKey(KeyCode key)
+        {
+            int i = (int)key;
+            return (uint)i < KeyCapacity && keyHeld[i];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetKeyDown(KeyCode key)
+        {
+            int i = (int)key;
+            return (uint)i < KeyCapacity && keyPressedThisFrame[i];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetKeyUp(KeyCode key)
+        {
+            int i = (int)key;
+            return (uint)i < KeyCapacity && keyReleasedThisFrame[i];
+        }
+
+        #endregion
+
+        #region Mouse Queries
+
+        public static bool AnyMouseButtonDown
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => anyMouseDownCount > 0;
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButton(uint button) => button < MouseButtonCount && mouseHeld[(int)button];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButton(MouseButton button) => GetMouseButton((uint)button);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButtonDown(uint button) => button < MouseButtonCount && mousePressedThisFrame[(int)button];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButtonDown(MouseButton button) => GetMouseButtonDown((uint)button);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButtonUp(uint button) => button < MouseButtonCount && mouseReleasedThisFrame[(int)button];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GetMouseButtonUp(MouseButton button) => GetMouseButton((uint)button);
+
+        #endregion
+
         public static void Reset()
         {
             Array.Clear(keyHeld, 0, KeyCapacity);
