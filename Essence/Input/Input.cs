@@ -105,9 +105,9 @@ namespace Essence.Input
                 { SDL.KeyCode.RightBracket, KeyCode.RightBracket },
                 // GraveAccent
 
-                { SDL.KeyCode.Escape, KeyCode.RightBracket },
-                { SDL.KeyCode.RightBracket, KeyCode.RightBracket },
-                { SDL.KeyCode.Tab, KeyCode.RightBracket },
+                { SDL.KeyCode.Escape, KeyCode.Escape },
+                // { SDL.KeyCode.Enter, KeyCode.Enter },
+                { SDL.KeyCode.Tab, KeyCode.Tab },
                 { SDL.KeyCode.Backspace, KeyCode.Backspace },
                 { SDL.KeyCode.Insert, KeyCode.Insert },
                 { SDL.KeyCode.Delete, KeyCode.Delete },
@@ -125,7 +125,6 @@ namespace Essence.Input
                 { SDL.KeyCode.RightCtrl, KeyCode.RightControl },
                 { SDL.KeyCode.RightAlt, KeyCode.RightAlt },
                 // Right Super
-                { SDL.KeyCode.Z, KeyCode.Z },
             };
         }
 
