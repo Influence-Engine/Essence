@@ -169,8 +169,6 @@ namespace Essence
                 SDL.DestroyWindow(handle);
                 handle = IntPtr.Zero;
             }
-
-            SDL.Quit();
         }
     }
 }
