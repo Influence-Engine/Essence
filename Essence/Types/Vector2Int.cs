@@ -176,20 +176,20 @@ namespace Essence
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2Int Reflect(Vector2 direction, Vector2 normal)
+        public static Vector2Int Reflect(Vector2Int direction, Vector2Int normal)
         {
-            float dot2 = 2f * (direction.x * normal.x + direction.y * normal.y);
+            int dot2 = 2 * (direction.x * normal.x + direction.y * normal.y);
             return new Vector2Int(direction.x - dot2 * normal.x, direction.y - dot2 * normal.y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2Int Project(Vector2Int a, Vector2Int b)
         {
-            float sqrMagnitude = b.x * b.x + b.y * b.y;
-            if (sqrMagnitude < 1e-8f)
+            int sqrMagnitude = b.x * b.x + b.y * b.y;
+            if (sqrMagnitude == 0)
                 return Zero;
 
-            float dot = a.x * b.x + a.y * b.y;
+            int dot = a.x * b.x + a.y * b.y;
             float scale = dot / sqrMagnitude;
             return new Vector2Int(b.x * scale, b.y * scale);
         }
