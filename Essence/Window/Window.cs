@@ -51,18 +51,16 @@ namespace Essence
             }
         }
 
-        // TODO use Vector2Int
-        public Vector2 Size
+        public Vector2Int Size
         {
-            get => new Vector2(width, height);
-            set => Resize((int)value.x, (int)value.y);
+            get => new Vector2Int(width, height);
+            set => Resize(value.x, value.y);
         }
 
-        // TODO use Vector2Int
-        public Vector2 Position
+        public Vector2Int Position
         {
-            get => new Vector2(x, y);
-            set => MoveTo((int)value.x, (int)value.y);
+            get => new Vector2Int(x, y);
+            set => MoveTo(value.x, value.y);
         }
 
         public float AspectRatio
