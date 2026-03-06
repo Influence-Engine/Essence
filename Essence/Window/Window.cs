@@ -22,6 +22,24 @@ namespace Essence
 
         string title;
 
+        WindowMode windowMode;
+        bool focused;
+
+        float opacity;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>Fired when the window is resized.</summary>
+        public event Action? OnResized;
+
+        /// <summary>Fired when the window is moved.</summary>
+        public event Action? OnMoved;
+
+        /// <summary>Fired when the window changes focus.</summary>
+        public event Action<bool>? OnFocusChanged;
+
         #endregion
 
         #region Properties
@@ -69,18 +87,50 @@ namespace Essence
             get => height > 0 ? (float)width / height : 1f;
         }
 
+        public WindowMode WindowMode
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => windowMode;
+            set => SetWindowMode(value);
+        }
+
+        public bool IsFocused
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => focused;
+        }
+
+        public float Opacity
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => opacity;
+            set
+            {
+                opacity = Math.Clamp(value, 0f, 1f);
+                SDL.SetWindowOpacity(handle, opacity);
+            }
+        }
+
         #endregion
 
-        public Window(string title, int width, int height)
+        public Window(string title, int width, int height, WindowMode mode)
         {
-            if (!SDL.Init(SDL.InitFlags.Video))
+            if (!SDL.Init(SDL.InitFlags.Video)) // This should probably be called outside the class before
                 throw new InvalidOperationException($"(SDL Init) failed: {SDL.GetError()}");
 
             this.title = title;
             this.width = width;
             this.height = height;
+            this.windowMode = mode;
+            this.opacity = 1f;
 
             SDL.WindowFlags flags = 0;
+            flags |= mode switch
+            {
+                WindowMode.Fullscreen => SDL.WindowFlags.Fullscreen,
+                WindowMode.BorderlessFullscreen => SDL.WindowFlags.Borderless,
+                _ => 0
+            };
 
             // Create window
             handle = SDL.CreateWindow(title, width, height, flags);
@@ -90,6 +140,8 @@ namespace Essence
             // Cache initial position
             SDL.GetWindowPosition(handle, out x, out y);
         }
+
+        public Window(string title, int width, int height): this(title, width, height, WindowMode.Windowed) { }
 
         public void ProcessEvent(SDL.Event e)
         {
@@ -102,6 +154,16 @@ namespace Essence
 
                 case SDL.EventType.WindowMoved:
                     HandleMove(e.window.data1, e.window.data2);
+                    break;
+
+                case SDL.EventType.WindowFocusGained:
+                    focused = true;
+                    OnFocusChanged?.Invoke(true);
+                    break;
+
+                case SDL.EventType.WindowFocusLost:
+                    focused = false;
+                    OnFocusChanged?.Invoke(false);
                     break;
 
                 case SDL.EventType.Quit:
@@ -131,7 +193,35 @@ namespace Essence
 
         public void MoveTo(int x, int y) => SDL.SetWindowPosition(handle, x, y);
 
+        public void Center() => SDL.SetWindowPosition(handle, SDL.WindowPos_Centered, SDL.WindowPos_Centered);
+
         #endregion
+
+        void SetWindowMode(WindowMode mode)
+        {
+            if (windowMode == mode)
+                return;
+
+            windowMode = mode;
+            switch(mode)
+            {
+                case WindowMode.Fullscreen:
+                    SDL.SetWindowFullscreen(handle, true);
+                    break;
+
+                case WindowMode.BorderlessFullscreen:
+                    SDL.SetWindowFullscreen(handle, false);
+                    SDL.SetWindowBordered(handle, false);
+                    SDL.MaximizeWindow(handle);
+                    break;
+
+                case WindowMode.Windowed:
+                    SDL.SetWindowFullscreen(handle, false);
+                    SDL.SetWindowBordered(handle, true);
+                    SDL.RestoreWindow(handle);
+                    break;
+            }
+        }
 
         #region Handlers
 
@@ -142,7 +232,7 @@ namespace Essence
 
             width = newWidth;
             height = newHeight;
-            // Trigger OnResize Action
+            OnResized?.Invoke();
         }
 
         void HandleMove(int newX, int newY)
@@ -152,7 +242,7 @@ namespace Essence
 
             x = newX;
             y = newY;
-            // Trigger OnMoved Action
+            OnMoved?.Invoke();
         }
 
         #endregion
