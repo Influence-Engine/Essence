@@ -179,6 +179,12 @@ namespace Essence.Input
                 case SDL.EventType.MouseWheel:
                     mouseScrollDelta = new Vector2(e.wheel.x, e.wheel.y);
                     break;
+
+                case SDL.EventType.WindowFocusLost:
+                    // Release all held inputs when focus is lost
+                    // Prevents stuck keys
+                    Input.Reset(); 
+                    break;
             }
         }
 
