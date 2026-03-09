@@ -169,7 +169,7 @@ namespace Essence.Input
                     break;
 
                 case SDL.EventType.MouseButtonUp:
-                    OnMouseButtonDown(GetMouseButtonIndex(e.button.button));
+                    OnMouseButtonUp(GetMouseButtonIndex(e.button.button));
                     break;
 
                 case SDL.EventType.MouseMotion:
